@@ -149,6 +149,43 @@ class QuizBot(commands.Cog):
 
         await ctx.send(f"{msg}")
 
+    @quiz.group()
+    async def ping(self, ctx):
+        """Tell the bot to ping you when a new quiz is available."""
+        player = session.query(Player).filter(Player.discord_id == ctx.author.id).first()
+        if not player:
+            player = Player(name=ctx.author.name, discord_id=ctx.author.id, ping=False)
+
+        if not player.ping:
+            player.ping = True
+            session.commit()
+
+            msg = "The bot will now ping you when a new quiz is available."
+        else:
+            msg = "The bot is already pinging you when a new quiz is available."
+
+        await ctx.send(msg)
+
+    @quiz.group()
+    async def unping(self, ctx):
+        """Remove the new quiz ping."""
+        player = session.query(Player).filter(Player.discord_id == ctx.author.id).first()
+        if not player:
+            player = Player(name=ctx.author.name, discord_id=ctx.author.id, ping=False)
+            session.add(player)
+            session.commit()
+
+            msg = "The bot will not ping you when a new quiz is available."
+        elif player.ping:
+            player.ping = False
+            session.commit()
+
+            msg = "The bot will not ping you when a new quiz is available."
+        else:
+            msg = "The bot is already not pinging you when a new quiz is available."
+
+        await ctx.send(msg)
+
     @tasks.loop(seconds=60)
     async def announce(self):
         quizzes = get_riddles()
@@ -157,6 +194,8 @@ class QuizBot(commands.Cog):
             channel = self.bot.get_channel(channel_id)
             for quiz in quizzes:
                 await channel.send(f"New quiz posted: #{quiz.id} - {quiz.name}")
+                pings = [f"<@{player.discord_id}>" for player in session.query(Player).filter(Player.ping == True)]
+                await channel.send(" ".join(pings))
 
     @announce.before_loop
     async def before_announce(self):

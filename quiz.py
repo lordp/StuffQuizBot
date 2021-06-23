@@ -66,6 +66,7 @@ class Player(Base):
     id = Column(Integer, primary_key=True)
     discord_id = Column(BigInteger, index=True)
     name = Column(String(50), nullable=False)
+    ping = Column(Boolean, default=False)
 
     quizzes = relationship("PlayerQuiz", backref=backref("player"))
 
