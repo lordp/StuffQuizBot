@@ -82,6 +82,14 @@ class PlayerQuiz(Base):
     perfect = Column(Boolean, default=False)
 
 
+class Config(Base):
+    __tablename__ = 'config'
+
+    server_id = Column(BigInteger, primary_key=True)
+    general_channel = Column(BigInteger)
+    announce_channel = Column(BigInteger)
+
+
 def get_riddle(quiz):
     print(quiz.name)
 

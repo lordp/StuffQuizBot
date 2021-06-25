@@ -6,7 +6,7 @@ import math
 import random
 import json
 
-from quiz import Quiz, Player, PlayerQuiz, session, format_time, get_riddles
+from quiz import Quiz, Player, PlayerQuiz, Config, session, format_time, get_riddles
 from sqlalchemy import func
 
 
@@ -16,16 +16,38 @@ class QuizBot(commands.Cog):
         self.in_quiz = {}
         self.config = {}
 
-        try:
-            with open("config.json") as config:
-                self.config = json.load(config)
-        except FileNotFoundError:
-            print("Config file not found!")
-
         self.announce.start()
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        for guild in self.bot.guilds:
+            if guild.id not in self.config:
+                self.config[guild.id] = {}
+
+            config = session.query(Config).filter(Config.server_id == guild.id).first()
+            self.config[guild.id]["general"] = config.general_channel
 
     def cog_unload(self):
         self.announce.cancel()
+
+    def save_config(self, guild_id: int):
+        config = session.query(Config).filter(Config.server_id == guild_id).first()
+        if not config:
+            config = Config(general_channel=None, server_id=guild_id)
+            session.add(config)
+
+        config.general_channel = self.config[guild_id]["general"]
+        session.commit()
+
+    @commands.command(name="set-channel")
+    @commands.is_owner()
+    async def set_channel(self, ctx, key: str):
+        if key in ["announce", "general"]:
+            self.config[ctx.guild.id][key] = ctx.channel.id
+            self.save_config(ctx.guild.id)
+            await ctx.send(f"{key} channel set to here.")
+        else:
+            await ctx.send(f"Unknown key '{key}'")
 
     @commands.group()
     async def quiz(self, ctx):
