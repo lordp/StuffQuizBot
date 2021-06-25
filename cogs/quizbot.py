@@ -39,6 +39,9 @@ class QuizBot(commands.Cog):
         config.general_channel = self.config[guild_id]["general"]
         session.commit()
 
+    def check_correct_channel(self, ctx):
+        return ctx.guild.id in self.config and self.config[ctx.guild.id]["general"] == ctx.channel.id
+
     @commands.command(name="set-channel")
     @commands.is_owner()
     async def set_channel(self, ctx, key: str):
@@ -52,6 +55,9 @@ class QuizBot(commands.Cog):
     @commands.group()
     async def quiz(self, ctx):
         """Quiz commands"""
+        if not self.check_correct_channel(ctx):
+            return
+
         if ctx.invoked_subcommand is None:
             await ctx.send_help('quiz')
 
@@ -212,12 +218,13 @@ class QuizBot(commands.Cog):
     async def announce(self):
         quizzes = get_riddles()
         if len(quizzes) > 0:
-            channel_id = self.config["announce_channel"]
-            channel = self.bot.get_channel(channel_id)
-            for quiz in quizzes:
-                await channel.send(f"New quiz posted: #{quiz.id} - {quiz.name}")
-                pings = [f"<@{player.discord_id}>" for player in session.query(Player).filter(Player.ping == True)]
-                await channel.send(" ".join(pings))
+            for guild in self.config:
+                channel_id = guild["general_channel"]
+                channel = self.bot.get_channel(channel_id)
+                for quiz in quizzes:
+                    await channel.send(f"New quiz posted: #{quiz.id} - {quiz.name}")
+                    pings = [f"<@{player.discord_id}>" for player in session.query(Player).filter(Player.ping == True)]
+                    await channel.send(" ".join(pings))
 
     @announce.before_loop
     async def before_announce(self):
