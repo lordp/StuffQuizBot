@@ -162,7 +162,7 @@ class QuizBot(commands.Cog):
             table_instance.justify_columns[2] = "center"
             table_instance.justify_columns[3] = "center"
 
-            msg = f"```\n{table_instance.table}```\nTo view a specific quiz leaderboard, try `+quiz leaderboard <quiz number>`"
+            msg = f"```\n{table_instance.table}```\nTo view a specific quiz leaderboard, try `{ctx.prefix}quiz leaderboard <quiz number>`"
         else:
             data = [["Name", "Score", "Time", "Perfect"]]
             pq = session.query(PlayerQuiz).where(PlayerQuiz.quiz_id == quiz_id).order_by(PlayerQuiz.score.desc(), PlayerQuiz.time_taken)
