@@ -1,4 +1,4 @@
-#Stuff Quiz Discord Bot
+# Stuff Quiz Discord Bot
 
 This is a Discord bot that brings the Stuff News daily quizzes to Discord. It's written in Python and makes use of the discord.py library, and PostgreSQL for storage.
 
