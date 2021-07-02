@@ -1,7 +1,13 @@
 # Stuff Quiz Discord Bot
-
 This is a Discord bot that brings the Stuff News daily quizzes to Discord. It's written in Python and makes use of the discord.py library, and PostgreSQL for storage.
 
-Installation should be as simple as cloning the repo, installing the dependencies through the `requirements.txt` file and running `python quiz.py` to create the database tables and pull down the 10 most recent published quizzes. To run the bot, you'll need a token from Discord, which you paste into the relevant place in `bot.py` and run  `python bot.py` to start the bot.
+## Installation
+1. Clone the repo
+1. Install dependencies - `pip install -r requirements.txt`
+1. Create the database - `createdb stuffquiz`
+1. Create database structure and download recently published quizzes - `python quiz.py`
+1. Obtain a Discord token and paste into `bot.py`
+1. Run the bot - `python bot.py`
 
-Once the bot is running, go into the channel where you want the bot to live and type `+set-channel general` to set the channel where all commands will be responded to - feel free to change the prefix (in `bot.py`, line 9) to something else if you wish.
+## Bot setup
+Once the bot is running, and invited to the server, go into the channel where you want the bot to live and type `+set-channel general` to set the channel where all commands will be responded to - if you wish to change the prefix, edit `bot.py` on line 9 to choose.
