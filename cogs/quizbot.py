@@ -114,11 +114,13 @@ class QuizBot(commands.Cog):
                 if question.freetext_question:
                     correct_answers = [a.answer_text for a in question.answers]
                     msg += "Type your answer below"
+                    correct_answer_text = " ".join(correct_answers)
                 else:
                     for answer_number, answer in enumerate(random.sample(question.answers, len(question.answers))):
                         msg += f"{answer_number + 1} - {answer.answer_text}\n"
                         if answer.answer_correct:
                             correct_answer = answer_number + 1
+                            correct_answer_text = answer.answer_text
 
                 msg += "```"
 
@@ -130,9 +132,9 @@ class QuizBot(commands.Cog):
                     self.in_quiz[user]["score"] += 1
                     correct_msg = "Correct!"
                 else:
-                    correct_msg = "Incorrect!"
+                    correct_msg = f"Incorrect! Correct answer is: {correct_answer_text}."
 
-                await dm.send(f"{correct_msg} {self.in_quiz[user]['score']} / {len(quiz.questions)}")
+                await dm.send(f"{correct_msg} Score: {self.in_quiz[user]['score']} / {len(quiz.questions)}")
 
             await dm.send("Done!")
 
