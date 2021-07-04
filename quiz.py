@@ -2,6 +2,7 @@ import json
 import re
 import pathlib
 from datetime import datetime
+import os
 
 import requests
 from bs4 import BeautifulSoup
@@ -12,8 +13,13 @@ from sqlalchemy.schema import Index
 from sqlalchemy.sql.expression import null
 from sqlalchemy.sql.sqltypes import DateTime
 
-engine = create_engine("postgresql:///stuffquiz")
+db_database = os.environ.get('POSTGRES_DB')
+db_user = os.environ.get('POSTGRES_USER')
+db_password = os.environ.get('POSTGRES_PASSWORD')
+db_host = os.environ.get('POSTGRES_HOST')
 
+db_url = f"postgresql://{db_user}:{db_password}@{db_host}/{db_database}"
+engine = create_engine(db_url)
 Base = declarative_base()
 
 

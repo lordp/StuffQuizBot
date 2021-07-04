@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+    bot:
+        build: .
+        env_file: 
+            - bot.env
+            - database.env
+        volumes:
+            - ./images:/code/images
+    db:
+        image: "postgres"
+        env_file: 
+            - database.env
+        volumes:
+            - database-data:/var/lib/postgresql/data/
+
+volumes:
+    database-data: 
