@@ -223,8 +223,8 @@ class QuizBot(commands.Cog):
         quizzes = get_riddles()
         if len(quizzes) > 0:
             for guild in self.config:
-                if guild['general_channel']:
-                    channel_id = guild["general_channel"]
+                if 'general_channel' in self.config[guild]:
+                    channel_id = self.config[guild]["general_channel"]
                     channel = self.bot.get_channel(channel_id)
                     for quiz in quizzes:
                         await channel.send(f"New quiz posted: #{quiz.id} - {quiz.name}")
